@@ -573,7 +573,7 @@ else
             l = eval(get(handles.maxpow, 'String'));
             E = AnalyzWD(handles.A, xo, l);
         end
-    else    % SSA
+    else    %SSA
         E = AnalyzWD(handles.A, xo, -1);
     end
 end

@@ -1,19 +1,20 @@
-%[filename pathname] = uigetfile('*.txt');
-fid = fopen('РусГидро15.txt');%strcat(pathname,filename));
+[filename pathname] = uigetfile('*.txt');
+fid = fopen(strcat(pathname,filename));
 D = textscan(fid,'%s %s %f %f %f %f %*[^\n]','CommentStyle','//');
 fclose(fid);
-data1 = D{4};%close
+data1 = D{4};%high
 %data_low = D{5};%low
-%data_high = D{4};%high
+%data_high = D{4};
 %data_open = D{3};%open
 date = D{1};
 time = D{2};
+[m data_h data_l] = smoothing(25,10,data1);
 
 DateTime = strcat(cell2mat(date),32,cell2mat(time));
 
 indexes = 1:size(data1,1);
 indexes = indexes';
-s = [indexes data1];
+s = [indexes data_l];
 
 T = 160;
 subinterval = 1;

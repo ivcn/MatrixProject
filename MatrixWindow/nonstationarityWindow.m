@@ -178,9 +178,13 @@ elseif handles.flagData==handles.radiobutton3
     r2=str2double(get(handles.edit8,'String'));
     c1=str2double(get(handles.edit9,'String'));
     c2=str2double(get(handles.edit10,'String'));
-    n1=(r1-1)*nx+c1;
-    n2=(r2-1)*nx+c2;
-    s =sum(signal(n1:n2,:),1);
+    s = zeros(1, size(signal,2));
+    for r = r1:r2
+        for c = c1:c2
+            n=(r1-1)*nx+c1;
+            s = s + signal(n,:);
+        end
+    end
     datastr = strcat('interval series',num2str(r1),'-',num2str(r2),32,num2str(c1),'-',num2str(c2));
 end
 
@@ -214,9 +218,9 @@ dateStart = datestr(dateStart);
 dateEnd = datestr(dateEnd);
 
 temp = zeros(size(x));
-dateStartMin = strcat(dateStart,'00:00');
+dateStartMin = strcat(dateStart, 32, '00:00:00');
 for i=1:size(x,2)
-    temp(i) = addtodate(datenum(dateStartMin,'dd-mmm-yyyy'),10*x(i),'minute');
+    temp(i) = addtodate(datenum(dateStartMin, 0),10*(x(i)-1),'minute');
 end
 %date_s = get(handles.outer_handles.startdate, 'String');
 %date_s = datestr(datenum(date_s, 'dd/mm/yyyy'), 'dd mm yyyy');
@@ -270,7 +274,7 @@ data = [ind' data];
 
 [m nf] = nonstationarity(T,size(data,1),alpha,deltaT,0,1,2,0,data,-1,25,1);
 x = (1+0+T:deltaT:1+(length(nf)-1)*deltaT+0+T);
-x = x./(1440/sampleFreq)+1;
+%x = x./(1440/sampleFreq)+1;
 figure();
 plot(x,nf,'k');
 xlim([x(1) x(end)]);
@@ -468,25 +472,22 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
+%кнопка Показать исходный.
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 figure();
-%x=x./144+1;
 dateStart=handles.outer_handles.date;
 T = str2double(get(handles.edit1,'String'));
+%get x-coordinates
 x=T+1:size(handles.s,2);
-%x=x(T+1:end);
-%numDays = str2double(get(handles.outer_handles.dni,'String'));
-%dateEnd = addtodate(datenum(handles.outer_handles.date),numDays,'day');
-%dateStartNew = datestr(addtodate(datenum(dateStart),10*T,'minute'));
+% get according dates
 dateStart = datestr(dateStart);
-%dateEnd = datestr(dateEnd);
 metka = str2double(get(handles.outer_handles.metka,'String'));
 temp = zeros(size(x));
+% add time to date
 dateStartMin = strcat(dateStart,32,'00:00');
 for i=1:size(x,2)
     temp(i) = addtodate(datenum(dateStartMin,'dd-mmm-yyyy HH:MM'),10*(x(i)-1),'minute');
@@ -496,11 +497,13 @@ xlim([temp(1) temp(end)]);
 set(gca,'FontName','Arial Cyr');
 set(gca,'XTick',temp(1:144*metka:size(temp,2)));
 datetick('x','m-dd','keepticks','keeplimits');
-
+hold on;
 if(get(handles.checkbox1,'Value')==true)
-    figure();
-    plot(handles.swt,'k');
+    pow = str2double(get(handles.edit11,'String'));
+    trend = ChebRazl(handles.s,pow,0);
+    plot(temp, trend(T+1:end), 'r');
 end
+hold off;
 
 
 % --- Executes when selected object is changed in uipanel2.

@@ -113,10 +113,14 @@ elseif handles.flagData==handles.radiobutton3
     r2=str2double(get(handles.edit9,'String'));
     c1=str2double(get(handles.edit10,'String'));
     c2=str2double(get(handles.edit11,'String'));
-    n1=(r1-1)*nx+c1;
-    n2=(r2-1)*nx+c2;
-    s =sum(signal(n1:n2,:),1);
-    datastr = strcat('interval series',num2str(r1),'-',num2str(r2),32,num2str(c1),'-',num2str(c2));
+    s = zeros(1, size(signal,2));
+    for r = r1:r2
+        for c = c1:c2
+            n=(r1-1)*nx+c1;
+            s = s + signal(n,:);
+        end
+    end
+    datastr = strcat('interval series', num2str(r1), '-', num2str(r2), 32,num2str(c1), '-', num2str(c2));
 end
 handles.s=s;
 % x=1:size(s,2);

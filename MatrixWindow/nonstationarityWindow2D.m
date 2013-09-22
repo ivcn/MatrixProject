@@ -153,7 +153,6 @@ guidata(hObject,handles);
 updateWindow(hObject,handles);
 
 
-
 % --- Executes on button press in checkbox2.
 function checkbox2_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox2 (see GCBO)

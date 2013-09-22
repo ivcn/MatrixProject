@@ -1432,7 +1432,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
+%кнопка Ряд мюонов
 % --- Executes on button press in pushbutton19.
 function pushbutton19_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton19 (see GCBO)
@@ -1493,7 +1493,8 @@ function pushbutton19_Callback(hObject, eventdata, handles)
         figure('Name', 'Интенсивность потока мюонов');
     end    
 
-    ffsum = zeros(5,size(cell2mat(handles.wrow),2));
+    %ffsum = zeros(5,size(cell2mat(handles.wrow),2));
+      ffsum = zeros(5,max(cellfun('size',handles.wrow,2)));
 %      'ffsum'
 %     size(ffsum)
     handles.B = [];
@@ -1505,8 +1506,11 @@ function pushbutton19_Callback(hObject, eventdata, handles)
         end    
         if sm(cursm)~=0  
             %ff - данные с супермодуля с номером cursm
-            ff = cell2mat(handles.wrow(cursm));
-            ff = ff((ty-1)*nx+tx,:); %, cursm
+            temp_data = handles.wrow{cursm};
+            ff = zeros(1,size(temp_data,2));
+            if ((ty-1)*nx+tx <= size(temp_data,1))
+                ff = temp_data((ty-1)*nx+tx,:); %, cursm
+            end
             n=size(ff,2);
 %              'ff'
 %              size(ff)
@@ -3098,12 +3102,6 @@ function pushbutton26_Callback(hObject, eventdata, handles)
     ylabel( 'Энергия' );
     grid on
     datetick('x','m-dd','keeplimits','keepticks');
-    
-    
-    
-
-
-
 
 
 % --- Executes on button press in montrend.
@@ -3291,10 +3289,6 @@ function pushbutton31_CreateFcn(hObject, eventdata, handles)
 % end
 % end
 % end
-% end end end end end end end end end end end end end end end end end end end end end
-% end end end end end end end end end end end end end end end end end end end end end end
-% end end end end end end end end end end end end end end end end end end end end end end end end end
-% end end end end end end end end end end end
 
 
 % --- Executes during object creation, after setting all properties.
@@ -3409,7 +3403,7 @@ function pushbutton32_CreateFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-
+%кнопка Загрузить отдельный ряд
 % --- Executes on button press in pushbutton32.
 function pushbutton32_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton32 (see GCBO)
@@ -3419,8 +3413,8 @@ function pushbutton32_Callback(hObject, eventdata, handles)
 if FileName~=0 
    % nullintervals=cell(1,4);
     %nullintervals(1,4) = [];
-    handles.nullintervals=cell(1,4);
-    handles.nullintervals(4) = mat2cell([]);
+    handles.nullintervals=cell(1, 4);
+    %handles.nullintervals{4} = mat2cell({});
     FullName = [PathName FileName];
     
     date_s = get(handles.startdate, 'String');
@@ -3428,13 +3422,14 @@ if FileName~=0
     handles.date = datevec(date_s);
 
     fid=fopen(FullName);
-    A=fscanf(fid,'%d');
+    A = importdata(strcat(PathName,FileName));
+    A = A(:, end);
     fclose(fid); 
     A=Obrezka(A);
     size(A)
-    handles.wrow = [];
-    handles.wrow(:,:,4) = A;
-    handles.wrow(:,:,5) = A;
+    handles.wrow = cell(1, 5);
+    handles.wrow{4} = A;
+    handles.wrow{5} = A;
     guidata(hObject, handles);
 end
 
@@ -3614,7 +3609,7 @@ xlabel( 'Время' ); ylabel( 'Число мюонов (без тренда)' );
 hold off;
 
 
-
+%кнопка Сохранить ряд
 % --- Executes on button press in pushbutton34.
 function pushbutton34_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton34 (see GCBO)
@@ -3678,7 +3673,7 @@ ty = eval(get(handles.ty, 'String'));  % - trend y
             [filename, pathname] = uiputfile({'*.txt'}, 'Save as', figname);
             %dlmwrite([pathname filename], ff, 'delimiter', '\r\n');
             fid = fopen([pathname filename],'wt');  
-            fprintf(fid,'%g\n',round(ff));  
+            fprintf(fid,'%g\n', ff);  
             fclose(fid);
         end
     end     
