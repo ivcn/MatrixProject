@@ -30,10 +30,10 @@ a = (mean_xy - mean_x*mean_y)/(mean_square_x - square_mean_x);
 b = mean(y) - a*mean(x);
 
 y_regr = a.*x+b;
-figure();
+figure(1);
 plot(x, y, 'k.');
 hold on;
-plot(x, y_regr, 'k');
+plot(x, y_regr, 'r');
 mu = -a;
 %calculate estimate of dispertion
 s2 = sum( (y - y_regr).^2)/(size(x,2)-2);
@@ -43,7 +43,7 @@ A(:,2) = 1;
 ATA = A'*A;
 K = s2*inv(ATA);
 disp_a = K(1,1);
-title(strcat(num2str(mu),'+-', num2str(disp_a)));
+title(strcat('\mu=', 32, num2str(mu), ' \pm', 32, num2str(disp_a)));
 %disp_b = K(2,2);
 output = [mu disp_a]
 end

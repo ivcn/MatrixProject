@@ -26,7 +26,8 @@ end
 
 figure();
 plot(log(sizeOfIntervalsInPartition), log(V), 'k.');
-c = polyfit(log(sizeOfIntervalsInPartition), log(V),1);
+hold on;
+c = polyfit(log(sizeOfIntervalsInPartition), log(V), 1);
 mean_xy = mean(log(sizeOfIntervalsInPartition).*log(V));
 mean_x = mean(log(sizeOfIntervalsInPartition));
 mean_y = mean(log(V));
@@ -34,3 +35,4 @@ mean_square_x = mean(log(sizeOfIntervalsInPartition).*log(sizeOfIntervalsInParti
 square_mean_x = mean(log(sizeOfIntervalsInPartition)).*mean(log(sizeOfIntervalsInPartition));
 mu = -(mean_xy - mean_x*mean_y)/(mean_square_x - square_mean_x);
 title(mu);
+plot(log(sizeOfIntervalsInPartition),log(sizeOfIntervalsInPartition).*c(1)+c(2), 'r');
